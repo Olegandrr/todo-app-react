@@ -1,7 +1,7 @@
 import { Task } from "../Task/Task";
 
 export const TaskList=({ list, deleteTask })=>{
- // console.log(list)
+ console.log(list)
   return (
     
       <ul className="todo-list">

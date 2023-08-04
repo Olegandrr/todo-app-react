@@ -13,9 +13,9 @@ const stylesFooter={
   buttonClear: "clear-completed",
 }
 
-function App() {
-  let keyID = 100;
+let keyID = 100;
 
+function App() {
   const [inputValue, setInputValue] = useState("");
   const [list, setList] = useState([]);
   
