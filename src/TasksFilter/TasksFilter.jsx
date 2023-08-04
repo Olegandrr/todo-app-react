@@ -1,9 +1,9 @@
-export const TasksFilter = (props)=>{
+export const TasksFilter = ({className})=>{
   //console.log(props)
   return(
-    <ul className={ props.className[0] }>
+    <ul className={ className[0] }>
       <li>
-        <button className={ props.className[1] }>All</button>
+        <button className={ className[1] }>All</button>
       </li>
       <li>
         <button>Active</button>

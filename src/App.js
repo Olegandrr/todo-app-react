@@ -24,7 +24,7 @@ function App() {
 
   const handleInputKeyDown = (e) => {
     if (e.key === "Enter" && inputValue.trim().length!==0) {
-      setList([...list, [inputValue, new Date(), keyID++]]);
+      setList([...list, [inputValue, new Date(), keyID++, false]]);
       setInputValue("");
     } else if(e.key === "Enter" && inputValue.trim().length===0) {
       setInputValue("");
@@ -41,9 +41,19 @@ function App() {
   const editTask = (e, key)=> {
     if (e.key === "Enter" && e.target.value.trim().length!==0){
       const index = list.findIndex((el)=>el[2] === key);
-      const newList = list.map((item, ind)=>ind !== index? item : [e.target.value, new Date(), key *= 2]);
+      const newList = list.map((item, ind)=> (
+          ind !== index? item : [e.target.value, item[1], key *= 2, false]
+          ));
       setList(newList)
     }
+  }
+
+  const completedTask = (key)=>{
+    const index = list.findIndex((el)=>el[2] === key);
+    const newList = list.map((item, ind)=>(
+          ind !== index? item : [...item.slice(0,3), item[3]? false : true ]
+          ));
+    setList(newList)
   }
 
   return (
@@ -65,10 +75,11 @@ function App() {
           list={ list } 
           deleteTask={ (key)=>deleteLi(key) } 
           editTask={ (e, key)=>editTask(e, key) }
+          completedTask={ (key)=>completedTask(key) }
         />
         <Footer 
           className={ stylesFooter } 
-          itemsLeft={ list.length } 
+          list={ list } 
         />
       </section>
     </section>

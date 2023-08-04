@@ -2,7 +2,7 @@ import { formatDistanceToNow } from 'date-fns';
 import { useState } from 'react';
 
 
-export const Task =({ item, dataCreated, deleteTask, editTask })=>{
+export const Task =({ item, dataCreated, deleteTask, editTask, completedTask, taskComplete })=>{
   
   const data = formatDistanceToNow(dataCreated, { 
       includeSeconds: true,
@@ -10,25 +10,19 @@ export const Task =({ item, dataCreated, deleteTask, editTask })=>{
     }
   );
 
-  let [completedTask, setCompletedTask] = useState(false);
-  
-  const handleCheckbox = ()=>{
-    setCompletedTask ((completedTask)=>completedTask=!completedTask);
-    }
-
   let [editingTask, setEditingTask] = useState(false);
   
   const handleEditTask = ()=>{
-    if(!completedTask) setEditingTask ((editingTask)=>editingTask=!editingTask);
+    if(!taskComplete) setEditingTask ((editingTask)=>editingTask=!editingTask);
     }
     
 
   return (
-    <li className={ completedTask? "completed" : "" || editingTask? "editing": "" }>
+    <li className={ taskComplete? "completed" : "" || editingTask? "editing": "" }>
       <div className="view" >
         <input 
           className="toggle" type="checkbox" 
-          onClick={handleCheckbox}
+          onClick={completedTask}
           />
         <label>
           <span className="description">{ item }</span>

@@ -1,12 +1,17 @@
 import { TasksFilter } from "../TasksFilter/TasksFilter";
 
-export const Footer = (props)=>{
+export const Footer = ({ className, list })=>{
+  
+
+  const itemsLeft = (list)=>{
+    return list.length!==0?  list.filter(item=>!item[3]).length : 0;
+  }
  
   return(
-    <footer className={ props.className.footer }>
-      <span className={ props.className.span }>{ props.itemsLeft } items left</span>
-      <TasksFilter className={ [props.className.ul, props.className.buttonAll] } />  
-      <button className={ props.className.buttonClear }>Clear completed</button>
+    <footer className={ className.footer }>
+      <span className={ className.span }>{ itemsLeft(list) } items left</span>
+      <TasksFilter className={ [className.ul, className.buttonAll] } />  
+      <button className={ className.buttonClear }>Clear completed</button>
     </footer>
   )
 }
