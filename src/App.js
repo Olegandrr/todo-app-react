@@ -4,7 +4,6 @@ import { Footer } from './Footer/Footer';
 import { TaskList } from './TaskList/TaskList';
 import './App.css';
 
-
 const stylesFooter={
   footer: "footer",
   span: "todo-count",
@@ -32,12 +31,27 @@ function App() {
     }
   };
 
-  const deleteLi = (keyID)=>{
-    const index = list.findIndex((el)=>el[2] === keyID);
+  const deleteLi = (key)=>{
+    const index = list.findIndex((el)=>el[2] === key);
     let before = list.slice(0, index);
     let after = list.slice(index+1);
     setList([...before, ...after]);
   };
+
+  const editTask = (e, key)=> {
+    if (e.key === "Enter" && e.target.value.trim().length!==0){
+      const index = list.findIndex((el)=>el[2] === key);
+      const newList = list.map((item, ind)=>{
+        if (ind === index) {
+          item[0] = e.target.value;
+          item[1] = new Date();
+          item[2] = key *= 2;
+        return item;
+        } else return item;
+      })    
+      setList(newList)
+    }
+  }
 
   return (
     <section className="todoapp">
@@ -54,10 +68,16 @@ function App() {
          />
       </header>
       <section className="main">
-        <TaskList list={ list } deleteTask={ (keyID)=>deleteLi(keyID) } />
-        <Footer className={ stylesFooter } itemsLeft = { list.length } />
+        <TaskList 
+          list={ list } 
+          deleteTask={ (key)=>deleteLi(key) } 
+          editTask={ (e, key)=>editTask(e, key) }
+        />
+        <Footer 
+          className={ stylesFooter } 
+          itemsLeft={ list.length } 
+        />
       </section>
-      
     </section>
   );
 }

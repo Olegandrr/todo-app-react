@@ -2,7 +2,7 @@ import { formatDistanceToNow } from 'date-fns';
 import { useState } from 'react';
 
 
-export const Task =({ item, dataCreated, deleteTask })=>{
+export const Task =({ item, dataCreated, deleteTask, editTask })=>{
   
   const data = formatDistanceToNow(dataCreated, { 
       includeSeconds: true,
@@ -46,6 +46,7 @@ export const Task =({ item, dataCreated, deleteTask })=>{
         type="text" 
         className="edit" 
         display={ editingTask? "block": "none" } 
+        onKeyDown={ editTask }
       
       />
     </li>
