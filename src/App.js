@@ -41,14 +41,7 @@ function App() {
   const editTask = (e, key)=> {
     if (e.key === "Enter" && e.target.value.trim().length!==0){
       const index = list.findIndex((el)=>el[2] === key);
-      const newList = list.map((item, ind)=>{
-        if (ind === index) {
-          item[0] = e.target.value;
-          item[1] = new Date();
-          item[2] = key *= 2;
-        return item;
-        } else return item;
-      })    
+      const newList = list.map((item, ind)=>ind !== index? item : [e.target.value, new Date(), key *= 2]);
       setList(newList)
     }
   }
