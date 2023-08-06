@@ -19,12 +19,18 @@ function App() {
   const [completedFlag, setCompletedFlag] = useState(false);
   const [activeFlag, setActiveFlag] = useState(false);  
 
-  const handleInputKeyDown = (e) => {
-    if (e.key === "Enter" && e.target.value.trim().length!==0) {
-      setList([...list, [e.target.value, new Date(), TaskID++, false]]);
-      e.target.value ="";
-    } else if(e.key === "Enter" && e.target.value.trim().length===0) {
-      e.target.value ="";
+  const handleInputKeyDown = (e, key) => {
+    if (e.key === "Enter" && e.target.value.trim().length!==0 ) {
+      if(key === 'newTask') {
+        setList([...list, [e.target.value, new Date(), TaskID++, false]]);
+        e.target.value = "";
+      } else {
+          const index = list.findIndex((el)=>el[2] === key);
+          const newList = list.map((item, ind)=>(
+            ind !== index? item : [e.target.value, item[1], key *= 2, false]
+            ));
+          setList(newList)
+        } 
     }
   };
 
@@ -34,26 +40,21 @@ function App() {
     setList(tasksItemDelete)
   };
 
-  const editTask = (e, key)=> {
-    if (e.key === "Enter" && e.target.value.trim().length!==0){
-      const index = list.findIndex((el)=>el[2] === key);
-      const newList = list.map((item, ind)=> (
-          ind !== index? item : [e.target.value, item[1], key *= 2, false]
-          ));
-      setList(newList)
-    }
-  }
-
   const completedTask = (key)=>{
     const index = list.findIndex((el)=>el[2] === key);
     const newList = list.map((item, ind)=>(
           ind !== index? item : [...item.slice(0,3), item[3]? false : true ]
           ));
-    setList([...newList])
+    setList(newList)
   }
 
   const filterAll=()=>{
     setActiveFlag(false);
+    setCompletedFlag(false);
+  }
+
+  const filterActive = ()=>{
+    setActiveFlag(true);
     setCompletedFlag(false);
   }
 
@@ -62,13 +63,8 @@ function App() {
       setActiveFlag(false);
   }
 
-  const filterActive = ()=>{
-    setActiveFlag(true);
-    setCompletedFlag(false);
-  }
-
   const clearCompleted =()=>{
-    const clearList=list.filter(item=>!item[3]);
+    const clearList = list.filter(item=>!item[3]);
     setList(clearList);
   }
   
@@ -80,7 +76,7 @@ function App() {
           className="new-todo"
           placeholder="What needs to be done?"  
           type="text"
-          onKeyDown={handleInputKeyDown}
+          onKeyDown={(e)=> handleInputKeyDown(e, 'newTask')}
           autoFocus 
          />
       </header>
@@ -88,10 +84,11 @@ function App() {
         <TaskList 
           list={ list } 
           handleDeleteTask = { (key)=>handleDeleteTask(key) } 
-          editTask={ (e, key)=>editTask(e, key) }
+          editTask={ (e, key)=>handleInputKeyDown(e, key) }
           completedTask={ (key)=>completedTask(key) }
           completedFlag={ completedFlag }
           activeFlag = {activeFlag}
+          
         />
         <Footer 
           className={ stylesFooter } 

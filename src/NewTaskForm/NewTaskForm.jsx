@@ -1,17 +1,14 @@
 
-export const NewTaskForm = (props)=> {
-
+export const NewTaskForm = ({className, placeholder, 
+                              type, onKeyDown, autoFocus})=> {
   return (
-   
       <input 
-      className={ props.className } 
-      placeholder={ props.placeholder } 
-      type={ props.type }
-      value={props.value}
-      onChange={props.onChange}
-      onKeyDown={props.onKeyDown}
-      autoFocus={ props.autoFocus } />
-
+        className={ className } 
+        placeholder={ placeholder } 
+        type={ type }
+        onKeyDown={onKeyDown}
+        autoFocus={ autoFocus } 
+      />
   )
 }
 
