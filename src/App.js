@@ -12,30 +12,26 @@ const stylesFooter={
   buttonClear: "clear-completed",
 }
 
-let keyID = 100;
+let TaskID = 100;
 
 function App() {
-  const [inputValue, setInputValue] = useState("");
   const [list, setList] = useState([]);
-  
-  const handleInputChange = (e) => {
-    setInputValue(e.target.value);
-  };
+  const [completedFlag, setCompletedFlag] = useState(false);
+  const [activeFlag, setActiveFlag] = useState(false);  
 
   const handleInputKeyDown = (e) => {
-    if (e.key === "Enter" && inputValue.trim().length!==0) {
-      setList([...list, [inputValue, new Date(), keyID++, false]]);
-      setInputValue("");
-    } else if(e.key === "Enter" && inputValue.trim().length===0) {
-      setInputValue("");
+    if (e.key === "Enter" && e.target.value.trim().length!==0) {
+      setList([...list, [e.target.value, new Date(), TaskID++, false]]);
+      e.target.value ="";
+    } else if(e.key === "Enter" && e.target.value.trim().length===0) {
+      e.target.value ="";
     }
   };
 
-  const deleteLi = (key)=>{
+  const handleDeleteTask = (key)=>{
     const index = list.findIndex((el)=>el[2] === key);
-    let before = list.slice(0, index);
-    let after = list.slice(index+1);
-    setList([...before, ...after]);
+    const tasksItemDelete = list.filter((i, ind)=>ind!==index);
+    setList(tasksItemDelete)
   };
 
   const editTask = (e, key)=> {
@@ -53,9 +49,29 @@ function App() {
     const newList = list.map((item, ind)=>(
           ind !== index? item : [...item.slice(0,3), item[3]? false : true ]
           ));
-    setList(newList)
+    setList([...newList])
   }
 
+  const filterAll=()=>{
+    setActiveFlag(false);
+    setCompletedFlag(false);
+  }
+
+  const filterComplete = ()=>{
+      setCompletedFlag(true);
+      setActiveFlag(false);
+  }
+
+  const filterActive = ()=>{
+    setActiveFlag(true);
+    setCompletedFlag(false);
+  }
+
+  const clearCompleted =()=>{
+    const clearList=list.filter(item=>!item[3]);
+    setList(clearList);
+  }
+  
   return (
     <section className="todoapp">
       <header className="header">
@@ -64,8 +80,6 @@ function App() {
           className="new-todo"
           placeholder="What needs to be done?"  
           type="text"
-          value={inputValue}
-          onChange={handleInputChange}
           onKeyDown={handleInputKeyDown}
           autoFocus 
          />
@@ -73,13 +87,21 @@ function App() {
       <section className="main">
         <TaskList 
           list={ list } 
-          deleteTask={ (key)=>deleteLi(key) } 
+          handleDeleteTask = { (key)=>handleDeleteTask(key) } 
           editTask={ (e, key)=>editTask(e, key) }
           completedTask={ (key)=>completedTask(key) }
+          completedFlag={ completedFlag }
+          activeFlag = {activeFlag}
         />
         <Footer 
           className={ stylesFooter } 
           list={ list } 
+          filterComplete = { filterComplete }
+          filterActive = { filterActive }
+          filterAll = {filterAll}
+          clearCompleted = {clearCompleted}
+          completedFlag={ completedFlag }
+          activeFlag = {activeFlag}
         />
       </section>
     </section>

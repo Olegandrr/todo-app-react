@@ -1,15 +1,19 @@
-export const TasksFilter = ({className})=>{
-  //console.log(props)
+
+export const TasksFilter = ({className, filterComplete, filterActive, filterAll, completedFlag, activeFlag})=>{
+
   return(
     <ul className={ className[0] }>
       <li>
-        <button className={ className[1] }>All</button>
+        <button  className={ activeFlag || completedFlag? "" : className[1] } onClick={filterAll}>All</button>
       </li>
       <li>
-        <button>Active</button>
+        <button className={ activeFlag? className[1] : ""   } 
+        onClick={ filterActive }>Active</button>
       </li>
       <li>
-        <button>Completed</button>
+        <button
+        className={ completedFlag? className[1] : ""  }
+        onClick={ filterComplete }>Completed</button>
       </li>
     </ul>
   )

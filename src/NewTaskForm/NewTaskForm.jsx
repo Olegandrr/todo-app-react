@@ -1,11 +1,10 @@
 
-
-
 export const NewTaskForm = (props)=> {
 
   return (
    
-      <input className={ props.className } 
+      <input 
+      className={ props.className } 
       placeholder={ props.placeholder } 
       type={ props.type }
       value={props.value}
