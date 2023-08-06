@@ -15,15 +15,20 @@ const stylesFooter={
 let TaskID = 100;
 
 function App() {
+  const [inputValue, setInputValue] = useState("");
   const [list, setList] = useState([]);
   const [completedFlag, setCompletedFlag] = useState(false);
   const [activeFlag, setActiveFlag] = useState(false);  
 
+  const handleInputChange = (e) => {
+    setInputValue(e.target.value);
+  };
+
   const handleInputKeyDown = (e, key) => {
     if (e.key === "Enter" && e.target.value.trim().length!==0 ) {
       if(key === 'newTask') {
-        setList([...list, [e.target.value, new Date(), TaskID++, false]]);
-        e.target.value = "";
+        setList([...list, [inputValue, new Date(), TaskID++, false]]);
+        setInputValue ("");
       } else {
           const index = list.findIndex((el)=>el[2] === key);
           const newList = list.map((item, ind)=>(
@@ -40,7 +45,7 @@ function App() {
     setList(tasksItemDelete)
   };
 
-  const completedTask = (key)=>{
+  const handleCompletedTasks = (key)=>{
     const index = list.findIndex((el)=>el[2] === key);
     const newList = list.map((item, ind)=>(
           ind !== index? item : [...item.slice(0,3), item[3]? false : true ]
@@ -76,6 +81,8 @@ function App() {
           className="new-todo"
           placeholder="What needs to be done?"  
           type="text"
+          value={inputValue}
+          onChange={handleInputChange}
           onKeyDown={(e)=> handleInputKeyDown(e, 'newTask')}
           autoFocus 
          />
@@ -83,9 +90,9 @@ function App() {
       <section className="main">
         <TaskList 
           list={ list } 
-          handleDeleteTask = { (key)=>handleDeleteTask(key) } 
+          deleteTask = { (key)=>handleDeleteTask(key) } 
           editTask={ (e, key)=>handleInputKeyDown(e, key) }
-          completedTask={ (key)=>completedTask(key) }
+          completedTask={ (key)=>handleCompletedTasks(key) }
           completedFlag={ completedFlag }
           activeFlag = {activeFlag}
           

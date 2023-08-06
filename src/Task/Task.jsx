@@ -3,48 +3,46 @@ import { useState } from 'react';
 
 
 export const Task =({ item, dataCreated, 
-  handleDeleteTask, editTask, 
-                  completedTask, taskComplete })=>{
+                      deleteTask, editTask, 
+                      completedTask, taskComplete })=>{
   
-  const data = formatDistanceToNow(dataCreated, { 
+  const timeCreation = formatDistanceToNow(dataCreated, { 
       includeSeconds: true,
       addSuffix: true,
     }
   );
 
-  let [editingTask, setEditingTask] = useState(false);
+  const [editingToggle, setEditingToggle] = useState(false);
   
-  const handleEditTask = ()=>{
-    if(!taskComplete) setEditingTask ((editingTask)=>editingTask=!editingTask);
+  const toggleEditTask = ()=>{
+    if(!taskComplete) setEditingToggle ((editingToggle)=>editingToggle=!editingToggle);
     }
 
- 
-    
   return (
-    <li className={ taskComplete? "completed" : "" || editingTask? "editing": "" }>
+    <li className={ taskComplete? "completed" : "" || editingToggle? "editing" : "" }>
       <div className="view" >
         <input 
           className="toggle" 
           type="checkbox" 
-          onClick={completedTask}
-          defaultChecked={taskComplete? true : false} 
+          onClick={ completedTask }
+          defaultChecked={ taskComplete? true : false } 
           />
         <label>
           <span className="description">{ item }</span>
-          <span className="created">created { data }</span>
+          <span className="created">created { timeCreation }</span>
         </label>
         <button 
           className="icon icon-edit"
-          onClick={handleEditTask}></button>
+          onClick={ toggleEditTask }></button>
         <button 
           className="icon icon-destroy"
-          onClick={ handleDeleteTask }
+          onClick={ deleteTask }
         ></button>
       </div>
       <input 
         type="text" 
         className="edit" 
-        display={ editingTask? "block": "none" } 
+        display={ editingToggle? "block": "none" } 
         onKeyDown={ editTask }
       />
     </li>
