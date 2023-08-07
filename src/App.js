@@ -18,13 +18,13 @@ function App() {
   const [inputValue, setInputValue] = useState("");
   const [list, setList] = useState([]);
   const [completedFlag, setCompletedFlag] = useState(false);
-  const [activeFlag, setActiveFlag] = useState(false);  
-
+  const [activeFlag, setActiveFlag] = useState(false); 
+  
   const handleInputChange = (e) => {
     setInputValue(e.target.value);
   };
 
-  const handleInputKeyDown = (e, key) => {
+  const handleInputKeyDown = (e, key='newTask') => {
     if (e.key === "Enter" && e.target.value.trim().length!==0 ) {
       if(key === 'newTask') {
         setList([...list, [inputValue, new Date(), TaskID++, false]]);
@@ -83,7 +83,7 @@ function App() {
           type="text"
           value={inputValue}
           onChange={handleInputChange}
-          onKeyDown={(e)=> handleInputKeyDown(e, 'newTask')}
+          onKeyDown={(e, key)=> handleInputKeyDown(e, key)}
           autoFocus 
          />
       </header>
@@ -111,6 +111,7 @@ function App() {
     </section>
   );
 }
+
 
 export default App;
 

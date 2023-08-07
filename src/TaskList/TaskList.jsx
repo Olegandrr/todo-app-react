@@ -1,6 +1,8 @@
 import { Task } from "../Task/Task";
+import PropTypes from 'prop-types';
 
 export const TaskList=({ list, deleteTask, editTask, completedTask, completedFlag, activeFlag })=>{
+  
   if(completedFlag){
     return (    
       <ul className="todo-list">
@@ -52,6 +54,14 @@ export const TaskList=({ list, deleteTask, editTask, completedTask, completedFla
       )
     }
 }
+
+TaskList.defaultProps = {
+  list: []
+};
+
+TaskList.propTypes = {
+  list: PropTypes.array
+};
 
 
 

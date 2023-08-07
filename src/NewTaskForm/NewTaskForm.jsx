@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 
 export const NewTaskForm = ({className, placeholder, type, value, onChange, onKeyDown, autoFocus})=> {
   return (
@@ -12,4 +13,13 @@ export const NewTaskForm = ({className, placeholder, type, value, onChange, onKe
       />
   )
 }
+
+NewTaskForm.defaultProps = {
+  className: "main",
+};
+
+NewTaskForm.propTypes = {
+  className: PropTypes.string,
+  onKeyDown: PropTypes.func.isRequired
+};
 
