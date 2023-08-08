@@ -1,51 +1,42 @@
-import { formatDistanceToNow } from 'date-fns';
-import { useState } from 'react';
+import { formatDistanceToNow } from 'date-fns'
+import { useState } from 'react'
 
+function Task({ item, dataCreated, deleteTask, editTask, completedTask, taskComplete }) {
+  const timeCreation = formatDistanceToNow(dataCreated, {
+    includeSeconds: true,
+    addSuffix: true,
+  })
 
-export const Task =({ item, dataCreated, 
-                      deleteTask, editTask, 
-                      completedTask, taskComplete })=>{
-  
-  const timeCreation = formatDistanceToNow(dataCreated, { 
-      includeSeconds: true,
-      addSuffix: true,
+  const [editingToggle, setEditingToggle] = useState(false)
+
+  const toggleEditTask = () => {
+    if (!taskComplete) setEditingToggle(true)
+  }
+
+  function liClassName() {
+    let className = ''
+    if (taskComplete) {
+      className = 'completed'
+    } else if (editingToggle) {
+      className = 'editing'
     }
-  );
-
-  const [editingToggle, setEditingToggle] = useState(false);
-  
-  const toggleEditTask = ()=>{
-    if(!taskComplete) setEditingToggle ((editingToggle)=>editingToggle=!editingToggle);
-    }
+    return className
+  }
 
   return (
-    <li className={ taskComplete? "completed" : "" || editingToggle? "editing" : "" }>
-      <div className="view" >
-        <input 
-          className="toggle" 
-          type="checkbox" 
-          onClick={ completedTask }
-          defaultChecked={ taskComplete? true : false } 
-          />
-        <label>
-          <span className="description">{ item }</span>
-          <span className="created">created { timeCreation }</span>
+    <li className={liClassName()}>
+      <div className="view">
+        <input className="toggle" type="checkbox" onClick={completedTask} defaultChecked={!!taskComplete} id="Label" />
+        <label htmlFor="Label">
+          <span className="description">{item}</span>
+          <span className="created">created {timeCreation}</span>
         </label>
-        <button 
-          className="icon icon-edit"
-          onClick={ toggleEditTask }></button>
-        <button 
-          className="icon icon-destroy"
-          onClick={ deleteTask }
-        ></button>
+        <button className="icon icon-edit" onClick={toggleEditTask} aria-label="Edit" type="button" />
+        <button className="icon icon-destroy" onClick={deleteTask} aria-label="Destroy" type="button" />
       </div>
-      <input 
-        type="text" 
-        className="edit" 
-        display={ editingToggle? "block": "none" } 
-        onKeyDown={ editTask }
-      />
+      <input type="text" className="edit" display={editingToggle ? 'block' : 'none'} onKeyDown={editTask} />
     </li>
-    
   )
 }
+
+export default Task
