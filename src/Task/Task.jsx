@@ -6,7 +6,7 @@ function Task({ item, dataCreated, deleteTask, editTask, completedTask, taskComp
     includeSeconds: true,
     addSuffix: true,
   })
-
+  const [inputValueEdit, setInputValueEdit] = useState(item)
   const [editingToggle, setEditingToggle] = useState(false)
 
   const toggleEditTask = () => {
@@ -34,7 +34,14 @@ function Task({ item, dataCreated, deleteTask, editTask, completedTask, taskComp
         <button className="icon icon-edit" onClick={toggleEditTask} aria-label="Edit" type="button" />
         <button className="icon icon-destroy" onClick={deleteTask} aria-label="Destroy" type="button" />
       </div>
-      <input type="text" className="edit" display={editingToggle ? 'block' : 'none'} onKeyDown={editTask} />
+      <input
+        type="text"
+        className="edit"
+        display={editingToggle ? 'block' : 'none'}
+        onKeyDown={editTask}
+        onChange={(e) => setInputValueEdit(e.target.value)}
+        value={inputValueEdit}
+      />
     </li>
   )
 }
