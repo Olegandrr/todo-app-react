@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 
-import Task from '../Task/Task'
+import Task from '../Task'
 
 function TaskList({ list, deleteTask, editTask, completedTask, completedFlag, activeFlag }) {
   let finalList = []

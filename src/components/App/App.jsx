@@ -1,8 +1,8 @@
 import { useState } from 'react'
 
-import NewTaskForm from './NewTaskForm/NewTaskForm'
-import Footer from './Footer/Footer'
-import TaskList from './TaskList/TaskList'
+import NewTaskForm from '../NewTaskForm'
+import Footer from '../Footer'
+import TaskList from '../TaskList'
 import './App.css'
 
 const stylesFooter = {

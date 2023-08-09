@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 
-import TasksFilter from '../TasksFilter/TasksFilter'
+import TasksFilter from '../TasksFilter'
 
 function Footer({
   className,
