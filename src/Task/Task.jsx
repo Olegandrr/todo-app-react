@@ -1,7 +1,7 @@
 import { formatDistanceToNow } from 'date-fns'
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 
-function Task({ item, dataCreated, deleteTask, editTask, completedTask, taskComplete }) {
+function Task({ item, dataCreated, id, deleteTask, editTask, completedTask, taskComplete }) {
   const timeCreation = formatDistanceToNow(dataCreated, {
     includeSeconds: true,
     addSuffix: true,
@@ -12,6 +12,11 @@ function Task({ item, dataCreated, deleteTask, editTask, completedTask, taskComp
   const toggleEditTask = () => {
     if (!taskComplete) setEditingToggle(true)
   }
+
+  const inputEditing = useRef()
+  useEffect(() => {
+    inputEditing.current.focus()
+  }, [editingToggle])
 
   function liClassName() {
     let className = ''
@@ -26,8 +31,8 @@ function Task({ item, dataCreated, deleteTask, editTask, completedTask, taskComp
   return (
     <li className={liClassName()}>
       <div className="view">
-        <input className="toggle" type="checkbox" onClick={completedTask} defaultChecked={!!taskComplete} id="Label" />
-        <label htmlFor="Label">
+        <input className="toggle" type="checkbox" onClick={completedTask} defaultChecked={!!taskComplete} id={id} />
+        <label htmlFor={id}>
           <span className="description">{item}</span>
           <span className="created">created {timeCreation}</span>
         </label>
@@ -41,6 +46,7 @@ function Task({ item, dataCreated, deleteTask, editTask, completedTask, taskComp
         onKeyDown={editTask}
         onChange={(e) => setInputValueEdit(e.target.value)}
         value={inputValueEdit}
+        ref={inputEditing}
       />
     </li>
   )

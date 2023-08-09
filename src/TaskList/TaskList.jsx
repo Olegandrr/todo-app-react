@@ -3,47 +3,17 @@ import PropTypes from 'prop-types'
 import Task from '../Task/Task'
 
 function TaskList({ list, deleteTask, editTask, completedTask, completedFlag, activeFlag }) {
+  let finalList = []
   if (completedFlag) {
-    return (
-      <ul className="todo-list">
-        {list
-          .filter((item) => item[3])
-          .map((item) => (
-            <Task
-              item={item[0]}
-              dataCreated={item[1]}
-              key={item[2]}
-              deleteTask={() => deleteTask(item[2])}
-              editTask={(e) => editTask(e, item[2])}
-              completedTask={() => completedTask(item[2])}
-              taskComplete={item[3]}
-            />
-          ))}
-      </ul>
-    )
-  }
-  if (activeFlag) {
-    return (
-      <ul className="todo-list">
-        {list
-          .filter((item) => !item[3])
-          .map((item) => (
-            <Task
-              item={item[0]}
-              dataCreated={item[1]}
-              key={item[2]}
-              deleteTask={() => deleteTask(item[2])}
-              editTask={(e) => editTask(e, item[2])}
-              completedTask={() => completedTask(item[2])}
-              taskComplete={item[3]}
-            />
-          ))}
-      </ul>
-    )
+    finalList = list.filter((item) => item[3])
+  } else if (activeFlag) {
+    finalList = list.filter((item) => !item[3])
+  } else {
+    finalList = list
   }
   return (
     <ul className="todo-list">
-      {list.map((item) => (
+      {finalList.map((item) => (
         <Task
           item={item[0]}
           dataCreated={item[1]}
