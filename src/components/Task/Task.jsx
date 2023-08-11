@@ -42,7 +42,6 @@ function Task({ item, dataCreated, id, deleteTask, editTask, completedTask, task
       <input
         type="text"
         className="edit"
-        display={editingToggle ? 'block' : 'none'}
         onKeyDown={editTask}
         onChange={(e) => setInputValueEdit(e.target.value)}
         value={inputValueEdit}
