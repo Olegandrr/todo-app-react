@@ -83,9 +83,6 @@ function App() {
       <header className="header">
         <h1>todos</h1>
         <NewTaskForm
-          className="new-todo"
-          placeholder="What needs to be done?"
-          type="text"
           value={inputValue}
           onChange={handleInputChange}
           onKeyDown={(e, key) => handleInputKeyDown(e, key)}

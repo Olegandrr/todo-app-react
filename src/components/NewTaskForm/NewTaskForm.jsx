@@ -1,24 +1,25 @@
+/* eslint-disable jsx-a11y/no-autofocus */
 import PropTypes from 'prop-types'
 
-function NewTaskForm({ className, placeholder, type, value, onChange, onKeyDown }) {
+function NewTaskForm({ value, onChange, onKeyDown }) {
   return (
-    <input
-      className={className}
-      placeholder={placeholder}
-      type={type}
-      value={value}
-      onChange={onChange}
-      onKeyDown={onKeyDown}
-    />
+    <form className="new-todo-form">
+      <input
+        value={value}
+        className="new-todo"
+        placeholder="Task"
+        type="text"
+        onChange={onChange}
+        onKeyDown={onKeyDown}
+        autoFocus
+      />
+      <input className="new-todo-form__timer" placeholder="Min" autoFocus />
+      <input className="new-todo-form__timer" placeholder="Sec" autoFocus />
+    </form>
   )
 }
 
-NewTaskForm.defaultProps = {
-  className: 'main',
-}
-
 NewTaskForm.propTypes = {
-  className: PropTypes.string,
   onKeyDown: PropTypes.func.isRequired,
 }
 
