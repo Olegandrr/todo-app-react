@@ -33,8 +33,13 @@ function Task({ item, dataCreated, id, deleteTask, editTask, completedTask, task
       <div className="view">
         <input className="toggle" type="checkbox" onClick={completedTask} defaultChecked={!!taskComplete} id={id} />
         <label htmlFor={id}>
-          <span className="description">{item}</span>
-          <span className="created">created {timeCreation}</span>
+          <span className="title">{item}</span>
+          <span className="description">
+            <button className="icon icon-play" aria-label="Play" type="button" />
+            <button className="icon icon-pause" aria-label="Pause" type="button" />
+            12:25
+          </span>
+          <span className="description">created {timeCreation}</span>
         </label>
         <button className="icon icon-edit" onClick={toggleEditTask} aria-label="Edit" type="button" />
         <button className="icon icon-destroy" onClick={deleteTask} aria-label="Destroy" type="button" />
