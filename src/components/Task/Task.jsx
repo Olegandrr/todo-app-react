@@ -9,14 +9,36 @@ class Task extends Component {
   state = {
     inputValueEdit: this.props.item,
     editingToggle: false,
+    currentTime: formatDistanceToNow(this.props.dataCreated, {
+      includeSeconds: true,
+      addSuffix: true,
+    }),
+    timer: 0,
+    timerStart: false,
   }
 
   componentDidMount() {
     console.log(' Маунт компонента!')
+    this.timeItem = setInterval(() => this.timeCreation(), 10000)
+
+    this.timerItem = setInterval(() => this.isTimer(), 1000)
   }
 
   componentDidUpdate() {
     console.log(' апдейт компонента!')
+  }
+
+  componentWillUnmount() {
+    console.log('Анмаунт компонента!')
+    clearInterval(this.timeItem)
+    clearInterval(this.timerItem)
+  }
+
+  handleInputKeyDown = (e) => {
+    if (e.key === 'Enter' && e.target.value.trim().length !== 0) {
+      this.setState({ editingToggle: false })
+      this.setState({ inputValueEdit: e.target.value })
+    }
   }
 
   timeCreation = () => {
@@ -24,7 +46,27 @@ class Task extends Component {
       includeSeconds: true,
       addSuffix: true,
     })
-    return time
+    this.setState({ currentTime: time })
+  }
+
+  isTimer = () => {
+    if (this.state.timerStart) {
+      this.setState((prevState) => ({
+        timer: prevState.timer + 1,
+      }))
+    }
+  }
+
+  handleOnClick = (e) => {
+    if (e.target.ariaLabel === 'Play') {
+      this.setState({
+        timerStart: true,
+      })
+    } else if (e.target.ariaLabel === 'Pause') {
+      this.setState({
+        timerStart: false,
+      })
+    }
   }
 
   toggleEditTask = () => {
@@ -37,24 +79,36 @@ class Task extends Component {
       className = 'completed'
     } else if (this.state.editingToggle) {
       className = 'editing'
+    } else if (this.props.completedFlag) {
+      className = 'hidden'
+    }
+    if (className === 'completed' && this.props.activeFlag) {
+      className += ' hidden'
     }
     return className
   }
 
   render() {
-    const { item, id, deleteTask, editTask, completedTask, taskComplete } = this.props
-    const { inputValueEdit } = this.state
+    const { id, deleteTask, completedTask, taskComplete } = this.props
+    const { inputValueEdit, currentTime, timer, timerStart } = this.state
     return (
       <li className={this.liClassName()}>
         <div className="view">
           <input className="toggle" type="checkbox" onClick={completedTask} defaultChecked={!!taskComplete} id={id} />
           <label htmlFor={id}>
-            <span className="title">{item}</span>
+            <span className="title">{inputValueEdit}</span>
             <span className="description">
-              <button className="icon icon-play" aria-label="Play" type="button" />
-              <button className="icon icon-pause" aria-label="Pause" type="button" /> 12:25
+              <button
+                className={timerStart ? 'icon icon-pause' : 'icon icon-play'}
+                aria-label={timerStart ? 'Pause' : 'Play'}
+                type="button"
+                onClick={this.handleOnClick}
+              />{' '}
+              {`${Math.floor(timer / 60) < 10 ? '0' : ''}${Math.floor(timer / 60)} : ${timer % 60 < 10 ? '0' : ''}${
+                timer % 60
+              }`}
             </span>
-            <span className="description">`created {this.timeCreation()}`</span>
+            <span className="description">created {currentTime}</span>
           </label>
           <button className="icon icon-edit" onClick={this.toggleEditTask} aria-label="Edit" type="button" />
           <button className="icon icon-destroy" onClick={deleteTask} aria-label="Destroy" type="button" />
@@ -62,7 +116,7 @@ class Task extends Component {
         <input
           type="text"
           className="edit"
-          onKeyDown={editTask}
+          onKeyDown={this.handleInputKeyDown}
           onChange={(e) => this.setState({ inputValueEdit: e.target.value })}
           value={inputValueEdit}
           autoFocus
