@@ -16,32 +16,23 @@ const stylesFooter = {
 let TaskID = 100
 
 function App() {
-  const [inputValue, setInputValue] = useState('')
+  const [inputValue, setInputValue] = useState({ newTask: '', minutes: '', seconds: '' })
   const [list, setList] = useState([])
   const [completedFlag, setCompletedFlag] = useState(false)
   const [activeFlag, setActiveFlag] = useState(false)
 
   const handleInputChange = (e) => {
-    setInputValue(e.target.value)
+    const { name, value } = e.target
+    setInputValue({ ...inputValue, [name]: value })
   }
-  // handleInputKeyDown для обработки ввода (Enter) в инпут при создании/редактировании таски.
-  // Меняет список тасок(list)[[введенное значание, дата создания, ключ, таска выполнена/не выполнена]].
-  const handleInputKeyDown = (e, key = 'newTask') => {
-    if (e.key === 'Enter' && e.target.value.trim().length !== 0) {
-      if (key === 'newTask') {
-        setList([...list, [inputValue, new Date(), (TaskID += 1), false]])
-        setInputValue('')
-      } else {
-        const index = list.findIndex((el) => el[2] === key)
-        const newNum = key * 2
-        const newList = list.map((item, ind) => {
-          if (ind !== index) {
-            return item
-          }
-          return [e.target.value, item[1], newNum, false]
-        })
-        setList(newList)
-      }
+  // handleInputKeyDown для обработки ввода (Enter) в инпут при создании/ таски
+  // Меняет список тасок(list)[[введенное значание, дата создания, ключ, таска выполнена/не выполнена, минуты, секунды]].
+  const handleInputKeyDown = (e) => {
+    const { newTask, minutes, seconds } = inputValue
+    if (e.key === 'Enter' && newTask !== '') {
+      e.preventDefault()
+      setList([...list, [newTask, new Date(), (TaskID += 1), false, minutes || 0, seconds || 0]])
+      setInputValue({ newTask: '', minutes: '', seconds: '' })
     }
   }
 
@@ -53,7 +44,9 @@ function App() {
 
   const handleCompletedTasks = (key) => {
     const index = list.findIndex((el) => el[2] === key)
-    const newList = list.map((item, ind) => (ind !== index ? item : [...item.slice(0, 3), !item[3]]))
+    const newList = list.map((item, ind) =>
+      ind !== index ? item : [...item.slice(0, 3), !item[3], ...item.slice(4, 6)]
+    )
     setList(newList)
   }
 
@@ -77,7 +70,7 @@ function App() {
     const clearList = list.filter((item) => !item[3])
     setList(clearList)
   }
-
+  console.log('содеражание в list: ', list)
   return (
     <section className="todoapp">
       <header className="header">
@@ -93,7 +86,7 @@ function App() {
           list={list}
           deleteTask={(key) => handleDeleteTask(key)}
           editTask={(e, key) => handleInputKeyDown(e, key)}
-          completedTask={(key) => handleCompletedTasks(key)}
+          completedTask={(key) => handleCompletedTasks(key)} // нужна ли она там? посмотреть
           completedFlag={completedFlag}
           activeFlag={activeFlag}
         />

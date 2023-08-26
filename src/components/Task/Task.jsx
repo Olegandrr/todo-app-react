@@ -3,7 +3,7 @@
 /* eslint-disable jsx-a11y/no-autofocus */
 /* eslint-disable react/prefer-stateless-function */
 import { formatDistanceToNow } from 'date-fns'
-import { Component } from 'react'
+import { Component, createRef } from 'react'
 
 class Task extends Component {
   state = {
@@ -13,19 +13,21 @@ class Task extends Component {
       includeSeconds: true,
       addSuffix: true,
     }),
-    timer: 0,
+    timer: parseInt(this.props.minutes, 10) * 60 + parseInt(this.props.seconds, 10),
     timerStart: false,
+    userTimer: parseInt(this.props.minutes, 10) * 60 + parseInt(this.props.seconds, 10),
   }
 
   componentDidMount() {
-    console.log(' Маунт компонента!')
     this.timeItem = setInterval(() => this.timeCreation(), 10000)
 
     this.timerItem = setInterval(() => this.isTimer(), 1000)
+
+    this.inputRef = createRef()
   }
 
   componentDidUpdate() {
-    console.log(' апдейт компонента!')
+    this.inputRef.current.focus()
   }
 
   componentWillUnmount() {
@@ -51,18 +53,33 @@ class Task extends Component {
 
   isTimer = () => {
     if (this.state.timerStart) {
-      this.setState((prevState) => ({
-        timer: prevState.timer + 1,
-      }))
+      if (this.state.userTimer < 1) {
+        this.setState((prevState) => ({
+          timer: prevState.timer + 1,
+        }))
+      } else {
+        console.log('prevState: ', this.state)
+        this.setState((prevState) =>
+          prevState.timer !== 0 ? { timer: prevState.timer - 1 } : { timerStart: false, timer: 0, userTimer: 0 }
+        )
+      }
     }
   }
 
+  formatTimer = () => {
+    const { timer } = this.state
+    return `${Math.floor(timer / 60) < 10 ? '0' : ''}${Math.floor(timer / 60)} : ${timer % 60 < 10 ? '0' : ''}${
+      timer % 60
+    }`
+  }
+
   handleOnClick = (e) => {
-    if (e.target.ariaLabel === 'Play') {
+    const { ariaLabel } = e.target
+    if (ariaLabel === 'Play') {
       this.setState({
         timerStart: true,
       })
-    } else if (e.target.ariaLabel === 'Pause') {
+    } else if (ariaLabel === 'Pause') {
       this.setState({
         timerStart: false,
       })
@@ -90,7 +107,7 @@ class Task extends Component {
 
   render() {
     const { id, deleteTask, completedTask, taskComplete } = this.props
-    const { inputValueEdit, currentTime, timer, timerStart } = this.state
+    const { inputValueEdit, currentTime, timerStart } = this.state
     return (
       <li className={this.liClassName()}>
         <div className="view">
@@ -104,9 +121,7 @@ class Task extends Component {
                 type="button"
                 onClick={this.handleOnClick}
               />{' '}
-              {`${Math.floor(timer / 60) < 10 ? '0' : ''}${Math.floor(timer / 60)} : ${timer % 60 < 10 ? '0' : ''}${
-                timer % 60
-              }`}
+              {this.formatTimer()}
             </span>
             <span className="description">created {currentTime}</span>
           </label>
@@ -119,6 +134,7 @@ class Task extends Component {
           onKeyDown={this.handleInputKeyDown}
           onChange={(e) => this.setState({ inputValueEdit: e.target.value })}
           value={inputValueEdit}
+          ref={this.inputRef}
           autoFocus
         />
       </li>

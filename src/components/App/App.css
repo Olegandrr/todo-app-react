@@ -94,6 +94,12 @@ body {
   margin-bottom: 0;
 }
 
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
 .new-todo,
 .new-todo-form .new-todo-form__timer,
 .edit {
