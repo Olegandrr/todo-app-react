@@ -1,7 +1,4 @@
-/* eslint-disable react/state-in-constructor */
 /* eslint-disable react/destructuring-assignment */
-/* eslint-disable jsx-a11y/no-autofocus */
-/* eslint-disable react/prefer-stateless-function */
 import { formatDistanceToNow } from 'date-fns'
 import { Component, createRef } from 'react'
 
@@ -9,20 +6,12 @@ class Task extends Component {
   state = {
     inputValueEdit: this.props.item,
     editingToggle: false,
-    currentTime: formatDistanceToNow(this.props.dataCreated, {
-      includeSeconds: true,
-      addSuffix: true,
-    }),
-    timer: parseInt(this.props.minutes, 10) * 60 + parseInt(this.props.seconds, 10),
+    timer: this.props.userTimerSeconds,
     timerStart: false,
-    userTimer: parseInt(this.props.minutes, 10) * 60 + parseInt(this.props.seconds, 10),
   }
 
   componentDidMount() {
-    this.timeItem = setInterval(() => this.timeCreation(), 10000)
-
     this.timerItem = setInterval(() => this.isTimer(), 1000)
-
     this.inputRef = createRef()
   }
 
@@ -31,46 +20,49 @@ class Task extends Component {
   }
 
   componentWillUnmount() {
-    console.log('Анмаунт компонента!')
-    clearInterval(this.timeItem)
     clearInterval(this.timerItem)
   }
 
   handleInputKeyDown = (e) => {
-    if (e.key === 'Enter' && e.target.value.trim().length !== 0) {
-      this.setState({ editingToggle: false })
-      this.setState({ inputValueEdit: e.target.value })
+    const { value } = e.target
+    if (e.key === 'Enter' && value.trim().length !== 0) {
+      this.setState({ editingToggle: false, inputValueEdit: value })
     }
   }
 
   timeCreation = () => {
-    const time = formatDistanceToNow(this.props.dataCreated, {
+    const { dataCreated } = this.props
+    const time = formatDistanceToNow(dataCreated, {
       includeSeconds: true,
       addSuffix: true,
     })
-    this.setState({ currentTime: time })
+    return time
   }
 
   isTimer = () => {
-    if (this.state.timerStart) {
-      if (this.state.userTimer < 1) {
+    const { timerStart } = this.state
+    const { userTimerSeconds } = this.props
+    if (timerStart) {
+      if (userTimerSeconds === 0) {
         this.setState((prevState) => ({
           timer: prevState.timer + 1,
         }))
       } else {
-        console.log('prevState: ', this.state)
-        this.setState((prevState) =>
-          prevState.timer !== 0 ? { timer: prevState.timer - 1 } : { timerStart: false, timer: 0, userTimer: 0 }
-        )
+        this.setState((prevState) => ({ timer: prevState.timer - 1 }))
       }
     }
   }
 
   formatTimer = () => {
     const { timer } = this.state
-    return `${Math.floor(timer / 60) < 10 ? '0' : ''}${Math.floor(timer / 60)} : ${timer % 60 < 10 ? '0' : ''}${
-      timer % 60
-    }`
+    if (timer >= 0) {
+      return `${Math.floor(timer / 60) < 10 ? '0' : ''}${Math.floor(timer / 60)} : ${timer % 60 < 10 ? '0' : ''}${
+        timer % 60
+      }`
+    }
+    return `${Math.floor(Math.abs(timer / 60)) < 10 ? '-0' : '-'}${Math.floor(Math.abs(timer / 60))} : ${
+      Math.abs(timer % 60) < 10 ? '0' : ''
+    }${Math.abs(timer % 60)}`
   }
 
   handleOnClick = (e) => {
@@ -91,15 +83,17 @@ class Task extends Component {
   }
 
   liClassName = () => {
+    const { taskComplete, completedFlag, activeFlag } = this.props
+    const { editingToggle } = this.state
     let className = ''
-    if (this.props.taskComplete) {
+    if (taskComplete) {
       className = 'completed'
-    } else if (this.state.editingToggle) {
+    } else if (editingToggle) {
       className = 'editing'
-    } else if (this.props.completedFlag) {
+    } else if (completedFlag) {
       className = 'hidden'
     }
-    if (className === 'completed' && this.props.activeFlag) {
+    if (className === 'completed' && activeFlag) {
       className += ' hidden'
     }
     return className
@@ -107,23 +101,23 @@ class Task extends Component {
 
   render() {
     const { id, deleteTask, completedTask, taskComplete } = this.props
-    const { inputValueEdit, currentTime, timerStart } = this.state
+    const { inputValueEdit, timerStart, timer } = this.state
     return (
       <li className={this.liClassName()}>
         <div className="view">
           <input className="toggle" type="checkbox" onClick={completedTask} defaultChecked={!!taskComplete} id={id} />
           <label htmlFor={id}>
             <span className="title">{inputValueEdit}</span>
-            <span className="description">
+            <span className={timer >= 0 ? 'description' : 'timer-expired'}>
               <button
                 className={timerStart ? 'icon icon-pause' : 'icon icon-play'}
                 aria-label={timerStart ? 'Pause' : 'Play'}
                 type="button"
                 onClick={this.handleOnClick}
-              />{' '}
+              />
               {this.formatTimer()}
             </span>
-            <span className="description">created {currentTime}</span>
+            <span className="description">created {this.timeCreation()}</span>
           </label>
           <button className="icon icon-edit" onClick={this.toggleEditTask} aria-label="Edit" type="button" />
           <button className="icon icon-destroy" onClick={deleteTask} aria-label="Destroy" type="button" />
@@ -135,7 +129,6 @@ class Task extends Component {
           onChange={(e) => this.setState({ inputValueEdit: e.target.value })}
           value={inputValueEdit}
           ref={this.inputRef}
-          autoFocus
         />
       </li>
     )

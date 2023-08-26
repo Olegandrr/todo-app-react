@@ -13,11 +13,10 @@ function TaskList({ list, deleteTask, completedTask, completedFlag, activeFlag }
           id={item[2]}
           deleteTask={() => deleteTask(item[2])}
           completedTask={() => completedTask(item[2])}
-          taskComplete={item[3]}
+          taskComplete={item[4]}
           completedFlag={completedFlag}
           activeFlag={activeFlag}
-          minutes={item[4]}
-          seconds={item[5]}
+          userTimerSeconds={item[3]}
         />
       ))}
     </ul>

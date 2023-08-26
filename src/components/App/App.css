@@ -255,6 +255,11 @@ input[type='number']::-webkit-outer-spin-button {
   color: gray;
 }
 
+.todo-list li label .timer-expired {
+  font-size: 13px;
+  color: red;
+}
+
 .todo-list li label .title {
   word-break: break-all;
   display: block;
@@ -311,6 +316,7 @@ input[type='number']::-webkit-outer-spin-button {
   font-size: 18px;
   width: 18px;
   height: 18px;
+  margin-right: 7px;
 }
 
 .todo-list li .icon-play {
