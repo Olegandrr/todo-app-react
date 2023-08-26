@@ -44,7 +44,8 @@
         "groups": ["builtin", "external", "internal", "parent", "sibling", "index"],
         "newlines-between": "always"
       }
-    ]
+    ],
+    "react/state-in-constructor": "off"
   },
   "settings": {
     "import/resolver": {

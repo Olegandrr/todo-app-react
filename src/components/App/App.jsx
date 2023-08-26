@@ -5,59 +5,47 @@ import Footer from '../Footer'
 import TaskList from '../TaskList'
 import './App.css'
 
-const stylesFooter = {
-  footer: 'footer',
-  span: 'todo-count',
-  ul: 'filters',
-  buttonAll: 'selected',
-  buttonClear: 'clear-completed',
-}
-
 let TaskID = 100
 
 function App() {
-  const [inputValue, setInputValue] = useState('')
+  const [inputValue, setInputValue] = useState({ newTask: '', minutes: '', seconds: '' })
   const [list, setList] = useState([])
   const [completedFlag, setCompletedFlag] = useState(false)
   const [activeFlag, setActiveFlag] = useState(false)
 
   const handleInputChange = (e) => {
-    setInputValue(e.target.value)
+    const { name, value } = e.target
+    setInputValue({ ...inputValue, [name]: Math.abs(value) || value })
   }
-  // handleInputKeyDown для обработки ввода (Enter) в инпут при создании/редактировании таски.
-  // Меняет список тасок(list)[[введенное значание, дата создания, ключ, таска выполнена/не выполнена]].
-  const handleInputKeyDown = (e, key = 'newTask') => {
-    if (e.key === 'Enter' && e.target.value.trim().length !== 0) {
-      if (key === 'newTask') {
-        setList([...list, [inputValue, new Date(), (TaskID += 1), false]])
-        setInputValue('')
-      } else {
-        const index = list.findIndex((el) => el[2] === key)
-        const newNum = key * 2
-        const newList = list.map((item, ind) => {
-          if (ind !== index) {
-            return item
-          }
-          return [e.target.value, item[1], newNum, false]
-        })
-        setList(newList)
-      }
+
+  // handleInputKeyDown для обработки ввода (Enter) в форме создания таски
+  // Меняет список тасок(list)[[введенное значание, дата создания, ключ, таймер пользователя в секундах, таска выполнена/не выполнена]].
+
+  const handleInputKeyDown = (e) => {
+    const { newTask, minutes, seconds } = inputValue
+    if (e.key === 'Enter' && newTask !== '') {
+      e.preventDefault()
+      const validMinutes = parseInt(minutes, 10) || 0
+      const validSeconds = parseInt(seconds, 10) || 0
+      const userTimerSeconds = validMinutes * 60 + validSeconds
+      setList([...list, [newTask, new Date(), (TaskID += 1), userTimerSeconds, false]])
+      setInputValue({ newTask: '', minutes: '', seconds: '' })
     }
   }
 
   const handleDeleteTask = (key) => {
     const index = list.findIndex((el) => el[2] === key)
-    const tasksItemDelete = list.filter((i, ind) => ind !== index)
+    const tasksItemDelete = list.filter((_, ind) => ind !== index)
     setList(tasksItemDelete)
   }
 
   const handleCompletedTasks = (key) => {
     const index = list.findIndex((el) => el[2] === key)
-    const newList = list.map((item, ind) => (ind !== index ? item : [...item.slice(0, 3), !item[3]]))
+    const newList = list.map((item, ind) => (ind !== index ? item : [...item.slice(0, 4), !item[4]]))
     setList(newList)
   }
 
-  // функции для обработки "кнопок" в футере, меняют состояние (completedFlag/activeFlag) для отрисовки нужных тасок в зависимости от кнопки.
+  // функции для обработки "кнопок" в футере, меняют состояние (completedFlag/activeFlag) для отрисовки нужных тасок в зависимости от кнопки и удаления исполненных.
   const filterAll = () => {
     setActiveFlag(false)
     setCompletedFlag(false)
@@ -74,34 +62,24 @@ function App() {
   }
 
   const clearCompleted = () => {
-    const clearList = list.filter((item) => !item[3])
+    const clearList = list.filter((item) => !item[4])
     setList(clearList)
   }
-
   return (
     <section className="todoapp">
       <header className="header">
         <h1>todos</h1>
-        <NewTaskForm
-          className="new-todo"
-          placeholder="What needs to be done?"
-          type="text"
-          value={inputValue}
-          onChange={handleInputChange}
-          onKeyDown={(e, key) => handleInputKeyDown(e, key)}
-        />
+        <NewTaskForm value={inputValue} onChange={handleInputChange} onKeyDown={(e) => handleInputKeyDown(e)} />
       </header>
       <section className="main">
         <TaskList
           list={list}
           deleteTask={(key) => handleDeleteTask(key)}
-          editTask={(e, key) => handleInputKeyDown(e, key)}
           completedTask={(key) => handleCompletedTasks(key)}
           completedFlag={completedFlag}
           activeFlag={activeFlag}
         />
         <Footer
-          className={stylesFooter}
           list={list}
           filterComplete={filterComplete}
           filterActive={filterActive}
