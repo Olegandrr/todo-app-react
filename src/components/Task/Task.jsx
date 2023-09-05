@@ -82,6 +82,20 @@ class Task extends Component {
     if (!this.props.taskComplete) this.setState({ editingToggle: true })
   }
 
+  deleteTask = () => {
+    const { handleDeleteTask, id, list } = this.props
+    const index = list.findIndex((el) => el[2] === id)
+    const tasksItemDelete = list.filter((_, ind) => ind !== index)
+    handleDeleteTask(tasksItemDelete)
+  }
+
+  completedTask = () => {
+    const { handleCompletedTasks, id, list } = this.props
+    const index = list.findIndex((el) => el[2] === id)
+    const newList = list.map((item, ind) => (ind !== index ? item : [...item.slice(0, 4), !item[4]]))
+    handleCompletedTasks(newList)
+  }
+
   liClassName = () => {
     const { taskComplete, completedFlag, activeFlag } = this.props
     const { editingToggle } = this.state
@@ -100,12 +114,18 @@ class Task extends Component {
   }
 
   render() {
-    const { id, deleteTask, completedTask, taskComplete } = this.props
+    const { id, taskComplete } = this.props
     const { inputValueEdit, timerStart, timer } = this.state
     return (
       <li className={this.liClassName()}>
         <div className="view">
-          <input className="toggle" type="checkbox" onClick={completedTask} defaultChecked={!!taskComplete} id={id} />
+          <input
+            className="toggle"
+            type="checkbox"
+            onClick={this.completedTask}
+            defaultChecked={!!taskComplete}
+            id={id}
+          />
           <label htmlFor={id}>
             <span className="title">{inputValueEdit}</span>
             <span className={timer >= 0 ? 'description' : 'timer-expired'}>
@@ -120,7 +140,7 @@ class Task extends Component {
             <span className="description">created {this.timeCreation()}</span>
           </label>
           <button className="icon icon-edit" onClick={this.toggleEditTask} aria-label="Edit" type="button" />
-          <button className="icon icon-destroy" onClick={deleteTask} aria-label="Destroy" type="button" />
+          <button className="icon icon-destroy" onClick={this.deleteTask} aria-label="Destroy" type="button" />
         </div>
         <input
           type="text"

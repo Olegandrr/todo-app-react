@@ -399,11 +399,8 @@ input[type='number']::-webkit-outer-spin-button {
   border-radius: 3px;
 }
 
-.filters li button:not(.selected) {
+.filters li button:not(.selected):hover {
   cursor: pointer;
-}
-
-.filters li:hover button {
   border-color: rgba(175, 47, 47, 0.1);
 }
 

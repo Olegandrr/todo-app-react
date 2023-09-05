@@ -1,25 +1,32 @@
 import PropTypes from 'prop-types'
+import { Component } from 'react'
 
 import TasksFilter from '../TasksFilter'
 
-function Footer({ list, filterComplete, filterActive, filterAll, clearCompleted, completedFlag, activeFlag }) {
-  const itemsLeft = () => (list.length !== 0 ? list.filter((item) => !item[4]).length : 0)
+class Footer extends Component {
+  itemsLeft = () => {
+    const { list } = this.props
+    return list.length !== 0 ? list.filter((item) => !item[4]).length : 0
+  }
 
-  return (
-    <footer className="footer">
-      <span className="todo-count">{itemsLeft()} items left</span>
-      <TasksFilter
-        filterComplete={filterComplete}
-        filterActive={filterActive}
-        filterAll={filterAll}
-        completedFlag={completedFlag}
-        activeFlag={activeFlag}
-      />
-      <button className="clear-completed" onClick={clearCompleted} type="button">
-        Clear completed
-      </button>
-    </footer>
-  )
+  handleClickCompleted = () => {
+    const { list, clearCompleted } = this.props
+    const clearList = list.filter((item) => !item[4])
+    clearCompleted(clearList)
+  }
+
+  render() {
+    const { filterComplete, filterActive, filterAll } = this.props
+    return (
+      <footer className="footer">
+        <span className="todo-count">{this.itemsLeft()} items left</span>
+        <TasksFilter filterComplete={filterComplete} filterActive={filterActive} filterAll={filterAll} />
+        <button className="clear-completed" onClick={this.handleClickCompleted} type="button">
+          Clear completed
+        </button>
+      </footer>
+    )
+  }
 }
 
 Footer.defaultProps = {
