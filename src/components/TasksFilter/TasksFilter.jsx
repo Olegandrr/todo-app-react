@@ -13,8 +13,7 @@ class TasksFilter extends Component {
     this.button = [{ name: 'All' }, { name: 'Active' }, { name: 'Completed' }]
   }
 
-  handleClickButton = (e) => {
-    const { name } = e.target
+  handleClickButton = ({ target: { name } }) => {
     const { filterAll, filterActive, filterComplete } = this.props
     if (name === 'All') {
       this.setState({
