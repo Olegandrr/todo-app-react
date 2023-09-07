@@ -8,8 +8,8 @@ import './App.css'
 
 function App() {
   const [list, setList] = useState([])
-  const [activeFlag, setActiveFlag] = useState(false)
-  const [completedFlag, setCompletedFlag] = useState(false)
+  const [filters, setFilters] = useState({ completedFlag: false, activeFlag: false })
+  const { activeFlag, completedFlag } = filters
 
   const handleInputKeyDown = (newTask, userTimerSeconds) => {
     setList([...list, [newTask, new Date(), uuidv4(), userTimerSeconds, false]])
@@ -22,19 +22,16 @@ function App() {
   const handleCompletedTasks = (newList) => {
     setList(newList)
   }
-  const filterAll = () => {
-    setActiveFlag(false)
-    setCompletedFlag(false)
+  const filterAll = (filtersToggle) => {
+    setFilters(filtersToggle)
   }
 
-  const filterActive = () => {
-    setActiveFlag(true)
-    setCompletedFlag(false)
+  const filterActive = (filtersToggle) => {
+    setFilters(filtersToggle)
   }
 
-  const filterComplete = () => {
-    setActiveFlag(false)
-    setCompletedFlag(true)
+  const filterComplete = (filtersToggle) => {
+    setFilters(filtersToggle)
   }
   const clearCompleted = (clearList) => {
     setList(clearList)
@@ -58,9 +55,9 @@ function App() {
         />
         <Footer
           list={list}
-          filterComplete={filterComplete}
-          filterActive={filterActive}
-          filterAll={filterAll}
+          filterComplete={(filtersToggle) => filterComplete(filtersToggle)}
+          filterActive={(filtersToggle) => filterActive(filtersToggle)}
+          filterAll={(filtersToggle) => filterAll(filtersToggle)}
           clearCompleted={(clearList) => clearCompleted(clearList)}
         />
       </section>
