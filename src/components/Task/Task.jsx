@@ -63,6 +63,15 @@ function Task({
     }
   }
 
+  const handleChange = (e) => {
+    setChangeInputValueEdit(e.target.value)
+  }
+
+  const handleBlur = () => {
+    setEditingToggle(false)
+    setChangeInputValueEdit(inputValueEdit)
+  }
+
   const timeCreation = () => {
     const time = formatDistanceToNow(dataCreated, {
       includeSeconds: true,
@@ -71,38 +80,38 @@ function Task({
     return time
   }
 
-  const handleOnClick = (e) => {
-    const { ariaLabel } = e.target
-    if (ariaLabel === 'Play') {
-      setTimerStart(true)
-    } else if (ariaLabel === 'Pause') {
-      setTimerStart(false)
-    } else if (ariaLabel === 'Edit') {
-      if (!taskComplete) setEditingToggle(true)
-    } else if (ariaLabel === 'Destroy') {
+  const buttonsClickAction = {
+    Play: () => setTimerStart(true),
+    Pause: () => setTimerStart(false),
+    Edit: () => !taskComplete && setEditingToggle(true),
+    Destroy: () => {
       const index = list.findIndex((el) => el[2] === id)
       const tasksItemDelete = list.filter((_, ind) => ind !== index)
       handleDeleteTask(tasksItemDelete)
-    } else if (ariaLabel === 'Completed') {
+    },
+    Completed: () => {
       const index = list.findIndex((el) => el[2] === id)
       const newList = list.map((it, ind) => (ind !== index ? it : [...it.slice(0, 4), !it[4]]))
       handleCompletedTasks(newList)
-    }
+    },
+  }
+
+  const handleOnClick = (e) => {
+    const { ariaLabel } = e.target
+    buttonsClickAction[ariaLabel]()
   }
 
   const liClassName = () => {
-    let className = ''
     if (taskComplete) {
-      className = 'completed'
-    } else if (editingToggle) {
-      className = 'editing'
-    } else if (completedFlag) {
-      className = 'hidden'
+      return activeFlag ? 'completed hidden' : 'completed'
     }
-    if (className === 'completed' && activeFlag) {
-      className += ' hidden'
+    if (editingToggle) {
+      return 'editing'
     }
-    return className
+    if (completedFlag) {
+      return 'hidden'
+    }
+    return ''
   }
 
   return (
@@ -136,7 +145,8 @@ function Task({
         type="text"
         className="edit"
         onKeyDown={handleInputKeyDown}
-        onChange={(e) => setChangeInputValueEdit(e.target.value)}
+        onChange={handleChange}
+        onBlur={handleBlur}
         value={changeInputValueEdit}
         ref={inputRef}
       />
